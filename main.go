@@ -22,20 +22,18 @@ func main() {
 	}
 }
 
-func test(w http.ResponseWriter, r *http.Request) {
+func test(w http.ResponseWriter, _ *http.Request) {
 	_, err := w.Write([]byte("Hello World"))
 	if err != nil {
 		return
 	}
 }
 
-func status(w http.ResponseWriter, r *http.Request) {
+func status(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func shutDownCmd(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Hello!")
-
+func shutDownCmd(_ http.ResponseWriter, _ *http.Request) {
 	// Use the "shutdown" command to shut down the computer immediately
 	cmd := exec.Command("sudo", "shutdown", "now")
 
@@ -47,9 +45,7 @@ func shutDownCmd(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func rebootCmd(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Hello!")
-
+func rebootCmd(_ http.ResponseWriter, _ *http.Request) {
 	// Use the "shutdown" command to shut down the computer immediately
 	cmd := exec.Command("sudo", "reboot", "now")
 
