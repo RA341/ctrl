@@ -12,6 +12,7 @@ func main() {
 
 	http.HandleFunc("/shutdown", shutDownCmd)
 	http.HandleFunc("/reboot", rebootCmd)
+	http.HandleFunc("/status", status)
 	http.HandleFunc("/test", test)
 
 	err := http.ListenAndServe(result, nil)
