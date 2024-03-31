@@ -24,7 +24,7 @@ func SearchQbitStalled() {
 	auth := LoginToQbit("r334", "Thisismyqbitpasskey#1505")
 
 	if auth == "" {
-		log.Fatal("Auth is empty")
+		log.Println("Auth is empty")
 	}
 
 	allFilters := []string{"stalled", "stalled_downloading"}
@@ -41,7 +41,7 @@ func SearchQbitStalled() {
 func SendWebHook(stalled map[string]interface{}) bool {
 	err, marshal := formatDiscordMessage(stalled)
 	if err != nil {
-		log.Fatal("Failed to format data")
+		log.Println("Failed to format data")
 		return false
 	}
 
@@ -50,21 +50,21 @@ func SendWebHook(stalled map[string]interface{}) bool {
 	req, err := http.NewRequest("POST", webhookUrl, payload)
 	req.Header.Add("Content-Type", "application/json")
 	if err != nil {
-		log.Fatal("Failed to create request.Reason: " + err.Error())
+		log.Println("Failed to create request.Reason: " + err.Error())
 		return false
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Fatal("Failed to send request\nReason: " + err.Error())
+		log.Println("Failed to send request\nReason: " + err.Error())
 		return false
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Fatal("Failed to close buffer body")
+			log.Println("Failed to close buffer body")
 			return
 		}
 	}(res.Body)
@@ -73,7 +73,7 @@ func SendWebHook(stalled map[string]interface{}) bool {
 		log.Print("Sent to webhook")
 		return true
 	} else {
-		log.Fatal("Request failed: " + res.Status)
+		log.Println("Request failed: " + res.Status)
 		return false
 	}
 }
@@ -99,7 +99,7 @@ func formatDiscordMessage(stalled map[string]interface{}) (error, []byte) {
 
 	marshal, err := json.Marshal(discordContent)
 	if err != nil {
-		log.Fatal("Failed to convert back to JSON")
+		log.Println("Failed to convert back to JSON")
 		return nil, nil
 	}
 	return err, marshal
@@ -132,21 +132,21 @@ func LoginToQbit(username string, pass string) string {
 	req, err := http.NewRequest("POST", url, payload)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	if err != nil {
-		log.Fatal("Failed to create request.Reason: " + err.Error())
+		log.Println("Failed to create request.Reason: " + err.Error())
 		return ""
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Fatal("Failed to send request\nReason: " + err.Error())
+		log.Println("Failed to send request\nReason: " + err.Error())
 		return ""
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Fatal("Failed to close buffer body")
+			log.Println("Failed to close buffer body")
 			return
 		}
 	}(res.Body)
@@ -161,9 +161,9 @@ func LoginToQbit(username string, pass string) string {
 			}
 		}
 
-		log.Fatal("Failed to get auth cookie. Reason: could not find the 'SID' cookie header")
+		log.Println("Failed to get auth cookie. Reason: could not find the 'SID' cookie header")
 	} else {
-		log.Fatal("Request failed: " + res.Status)
+		log.Println("Request failed: " + res.Status)
 	}
 	return ""
 }
@@ -176,7 +176,7 @@ func getStalledTorrents(auth string, filter string) []map[string]interface{} {
 
 	req, err := http.NewRequest("GET", url, strings.NewReader(""))
 	if err != nil {
-		log.Fatal("Failed to create request.Reason: " + err.Error())
+		log.Println("Failed to create request.Reason: " + err.Error())
 		return []map[string]interface{}{}
 	}
 
@@ -185,14 +185,14 @@ func getStalledTorrents(auth string, filter string) []map[string]interface{} {
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Fatal("Failed to send request\nReason: " + err.Error())
+		log.Println("Failed to send request\nReason: " + err.Error())
 		return []map[string]interface{}{}
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Fatal("Failed to close buffer body")
+			log.Println("Failed to close buffer body")
 			return
 		}
 	}(res.Body)
@@ -200,21 +200,21 @@ func getStalledTorrents(auth string, filter string) []map[string]interface{} {
 	if res.StatusCode == 200 {
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Fatal("Failed to read body", err)
+			log.Println("Failed to read body", err)
 			return []map[string]interface{}{}
 		}
 
 		var data []map[string]interface{}
 		err = json.Unmarshal(body, &data)
 		if err != nil {
-			log.Fatal("Failed to unmarshal json", err)
+			log.Println("Failed to unmarshal json", err)
 			return []map[string]interface{}{}
 		}
 
 		return data
 
 	} else {
-		log.Fatal("Request failed: " + res.Status)
+		log.Println("Request failed: " + res.Status)
 	}
 	return []map[string]interface{}{}
 }
