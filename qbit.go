@@ -111,6 +111,8 @@ func notifyStalledTorrents(stalled []map[string]interface{}, threshHold time.Dur
 
 		if duration.Hours() >= threshHold.Hours() && torrent["state"] != "stalledUP" {
 			SendWebHook(torrent)
+		} else {
+			log.Println("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
 		}
 	}
 }

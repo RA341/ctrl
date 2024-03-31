@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 )
 
 var running = false
@@ -12,17 +14,19 @@ func main() {
 	port := "8080"
 	result := fmt.Sprintf(":%s", port)
 
-	// Add the number of tasks to the WaitGroup counter
-	wg.Add(1)
-
-	// run sync commands
-	periodicRcloneTask()
-
 	http.HandleFunc("/shutdown", shutDownCmd)
 	http.HandleFunc("/reboot", rebootCmd)
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/device", deviceCheck)
 	http.HandleFunc("/test", test)
+
+	ticker := time.NewTicker(time.Minute * 1)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		log.Println("Running stalled torrent search")
+		go SearchQbitStalled()
+	}
 
 	err := http.ListenAndServe(result, nil)
 
