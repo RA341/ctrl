@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	qBitBasePath     = "http://192.168.1.124:8085/api/v2"
+	qBitBasePath     = "http://localhost:8085/api/v2"
 	loginPath        = "/auth/login"
 	listTorrentsPath = "/torrents/info"
 	webhookUrl       = "https://discord.com/api/webhooks/1223892724537753661/5VvQzM9chKTUYkAxit3ddAf__8s_dybIbBQ2sB33n7S7RHgn4OzQ27XgXZ0f2qbP0S7w"
