@@ -24,28 +24,33 @@ func SearchQbitStalled() {
 	auth := LoginToQbit("r334", "Thisismyqbitpasskey#1505")
 
 	if auth == "" {
+		message := []byte("Error failed to login to Qbit")
+		SendWebHook(message)
+		log.Println("[ERROR] failed to login to qbit")
+		return
+	}
+
+	if auth == "" {
 		log.Println("Auth is empty")
 	}
 
 	allFilters := []string{"stalled", "stalled_downloading"}
+	thresholdTime := time.Hour * 2
 
 	for _, filter := range allFilters {
 		stalled := getStalledTorrents(auth, filter)
 		// all stalled torrents with time added greater than 2 hours will be sent to webhook
-		thresholdTime := time.Hour * 2
 		notifyStalledTorrents(stalled, thresholdTime)
 	}
 
+	// separate for downloading
+	// because separate conditions that don't work with stalled
+	stalled := getStalledTorrents(auth, "downloading")
+	notifyDownloadingMetadataTorrents(stalled, thresholdTime)
 }
 
-func SendWebHook(stalled map[string]interface{}) bool {
-	err, marshal := formatDiscordMessage(stalled)
-	if err != nil {
-		log.Println("Failed to format data")
-		return false
-	}
-
-	payload := strings.NewReader(string(marshal))
+func SendWebHook(message []byte) bool {
+	payload := strings.NewReader(string(message))
 
 	req, err := http.NewRequest("POST", webhookUrl, payload)
 	req.Header.Add("Content-Type", "application/json")
@@ -109,8 +114,36 @@ func notifyStalledTorrents(stalled []map[string]interface{}, threshHold time.Dur
 	for _, torrent := range stalled {
 		duration := timeSinceAdd(torrent)
 
-		if duration.Hours() >= threshHold.Hours() && torrent["state"] != "stalledUP" {
-			SendWebHook(torrent)
+		// send web hook if torrent is stalled downloading
+		// or if metadata has been downloading for more than an hour
+		if duration.Hours() >= threshHold.Hours() && (torrent["state"] != "stalledUP") {
+			if torrent["state"] != "metaDL" {
+				continue
+			}
+			err, message := formatDiscordMessage(torrent)
+			if err != nil {
+				log.Println("Failed to format data")
+			}
+			SendWebHook(message)
+		} else {
+			log.Println("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
+		}
+	}
+}
+
+func notifyDownloadingMetadataTorrents(metaDown []map[string]interface{}, threshHold time.Duration) {
+	for _, torrent := range metaDown {
+		duration := timeSinceAdd(torrent)
+
+		// send web hook if torrent is torrent downloading
+		//but metadata down has been stuck for more then hour
+		if duration.Hours() >= threshHold.Hours() && torrent["state"] == "metaDL" {
+			err, marshal := formatDiscordMessage(torrent)
+			if err != nil {
+				log.Println("Failed to format data")
+				continue
+			}
+			SendWebHook(marshal)
 		} else {
 			log.Println("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
 		}

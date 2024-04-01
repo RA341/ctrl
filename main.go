@@ -7,10 +7,7 @@ import (
 	"time"
 )
 
-var running = false
-
 func main() {
-
 	port := "8080"
 	result := fmt.Sprintf("0.0.0.0:%s", port)
 
