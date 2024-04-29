@@ -13,16 +13,19 @@ func main() {
 
 	fmt.Println("Starting server on " + port)
 
-	http.HandleFunc("/shutdown", shutDownCmd)
-	http.HandleFunc("/reboot", rebootCmd)
+	// system power controls
+	http.HandleFunc("/shutdown", ExecShutDown)
+	http.HandleFunc("/reboot", ExecReboot)
+	http.HandleFunc("/sleep", ExecSleep)
+	// misc stuff
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/device", deviceCheck)
 	http.HandleFunc("/test", test)
 
+	// start periodic func
 	go runPeriodicTasks()
 
 	err := http.ListenAndServe(result, nil)
-
 	if err != nil {
 		fmt.Println(err.Error())
 		return

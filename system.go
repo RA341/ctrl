@@ -1,34 +1,40 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"os/exec"
 )
 
-func shutDown() *exec.Cmd {
-	return exec.Command("sudo", "shutdown", "now")
+func ExecShutDown(_ http.ResponseWriter, _ *http.Request) {
+	// Use the "shutdown" command to shut down the computer immediately
+	os := getOS()
+	var cmds []string
+	if os == "windows" {
+		cmds = []string{"psshutdown", "-s", " -t", "0"}
+	} else {
+		cmds = []string{"sudo", "shutdown", "now"}
+	}
+	execShell(cmds)
 }
 
-func shutDownCmd(_ http.ResponseWriter, _ *http.Request) {
-	// Use the "shutdown" command to shut down the computer immediately
-	cmd := shutDown()
-	// Run the command
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Whoa there, something went wrong!")
-		println(err.Error())
+func ExecReboot(_ http.ResponseWriter, _ *http.Request) {
+	os := getOS()
+	var cmds []string
+	if os == "windows" {
+		cmds = []string{"psshutdown", "-r", " -t", "0"}
+	} else {
+		cmds = []string{"sudo", "reboot", "now"}
 	}
+	execShell(cmds)
 }
 
-func rebootCmd(_ http.ResponseWriter, _ *http.Request) {
-	// Use the "shutdown" command to shut down the computer immediately
-	cmd := exec.Command("sudo", "reboot", "now")
-
-	// Run the command
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Whoa there, something went wrong!")
-		println(err.Error())
+func ExecSleep(_ http.ResponseWriter, _ *http.Request) {
+	os := getOS()
+	var cmds []string
+	if os == "windows" {
+		cmds = []string{"psshutdown", "-d", " -t", "0"}
+	} else {
+		cmds = []string{"sudo", "sleep", "now"}
 	}
+	execShell(cmds)
+
 }
