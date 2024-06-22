@@ -1,13 +1,14 @@
 package qbit
 
 import (
+	"ctrl/core/config"
 	"ctrl/core/utils"
 	"fmt"
 	"log"
 )
 
 func CheckQBitStatus() {
-	auth := LoginToQbit("r334", "Thisismyqbitpasskey#1505")
+	auth := LoginToQbit(config.Get().Qbit.User, config.Get().Qbit.Pass)
 
 	if auth == "" {
 		message := []byte("Error failed to login to Qbit")
@@ -15,11 +16,12 @@ func CheckQBitStatus() {
 		log.Println("[ERROR] failed to login to qbit")
 		return
 	}
+
 	checkStatus(auth)
 }
 
 func checkStatus(auth string) {
-	url := qBitBasePath + clientStatus
+	url := qBitBasePath + clientStatusPath
 	_, data := MakeGetRequestToClient(auth, url, false)
 
 	val, ok := data["connection_status"]

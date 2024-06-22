@@ -1,6 +1,7 @@
 package qbit
 
 import (
+	"ctrl/core/config"
 	utils "ctrl/core/utils"
 	"encoding/json"
 	"fmt"
@@ -8,18 +9,18 @@ import (
 	"time"
 )
 
-const (
-	qBitBasePath     = "http://localhost:8085/api/v2"
-	loginPath        = "/auth/login"
-	listTorrentsPath = "/torrents/info"
-	clientStatus     = "/transfer/info"
+var (
+	qBitBasePath = fmt.Sprintf("%s/api/v2", config.Get().Qbit.Url)
 )
 
-const username = "QBit bot"
-const avatar_url = "https://i.imgur.com/KEungv8.png"
+const (
+	loginPath        = "/auth/login"
+	listTorrentsPath = "/torrents/info"
+	clientStatusPath = "/transfer/info"
+)
 
 func SearchQbitStalled() {
-	auth := LoginToQbit("r334", "Thisismyqbitpasskey#1505")
+	auth := LoginToQbit(config.Get().Qbit.User, config.Get().Qbit.Pass)
 
 	if auth == "" {
 		message := []byte("Error failed to login to Qbit")
@@ -46,8 +47,8 @@ func SearchQbitStalled() {
 func formatDiscordMessage(stalled map[string]interface{}) (error, []byte) {
 	discordContent := make(map[string]interface{})
 
-	discordContent["avatar_url"] = avatar_url
-	discordContent["username"] = username
+	discordContent["username"] = config.Get().DiscordNotif.Username
+	discordContent["avatar_url"] = config.Get().DiscordNotif.AvatarURL
 
 	message := fmt.Sprintf(
 		"Stalled torrents detected.\nName: %s\nadded: %s ago\ncategory: %s\nStatus: %s", stalled["name"], formatDuration(timeSinceAdd(stalled)), stalled["category"], stalled["state"])

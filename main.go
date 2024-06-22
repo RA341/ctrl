@@ -7,18 +7,20 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 func main() {
 	config.Load()
 
-	port := "8080"
-	result := fmt.Sprintf("0.0.0.0:%s", port)
+	settings := config.Get()
 
+	port := strconv.Itoa(settings.Network.Port)
+	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
 	fmt.Println("Starting server on " + port)
 
-	// ui
+	// TODO ui
 
 	// system power controls
 	http.HandleFunc("/shutdown", system.ExecShutDown)
