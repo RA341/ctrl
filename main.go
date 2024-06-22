@@ -2,7 +2,7 @@ package main
 
 import (
 	"ctrl/core/config"
-	qbit2 "ctrl/core/qbit"
+	qbit "ctrl/core/qbit"
 	system "ctrl/core/system"
 	"fmt"
 	"log"
@@ -47,8 +47,7 @@ func runPeriodicTasks() {
 
 	for range ticker.C {
 		log.Println("Running stalled torrent search")
-		go qbit2.CheckQBitStatus()
-		go qbit2.SearchQbitStalled()
+		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck})
 	}
 }
 
@@ -61,8 +60,4 @@ func test(w http.ResponseWriter, _ *http.Request) {
 
 func status(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
-}
-
-func readSettings() {
-
 }

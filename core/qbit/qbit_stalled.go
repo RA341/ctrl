@@ -19,16 +19,7 @@ const (
 	clientStatusPath = "/transfer/info"
 )
 
-func SearchQbitStalled() {
-	auth := LoginToQbit(config.Get().Qbit.User, config.Get().Qbit.Pass)
-
-	if auth == "" {
-		message := []byte("Error failed to login to Qbit")
-		utils.SendWebHook(message)
-		log.Println("[ERROR] failed to login to qbit")
-		return
-	}
-
+func checkStalledTorrents(auth string) {
 	allFilters := []string{"stalled", "stalled_downloading"}
 	thresholdTime := time.Hour * 2
 
@@ -120,6 +111,6 @@ func timeSinceAdd(torrent map[string]interface{}) time.Duration {
 // getStalledTorrents get all stalled torrents with last active greater than some time
 func getStalledTorrents(auth string, filter string) []map[string]interface{} {
 	url := qBitBasePath + listTorrentsPath + "?filter=" + filter
-	res, _ := MakeGetRequestToClient(auth, url, true)
+	res, _ := makeGetRequestToClient(auth, url, true)
 	return res
 }

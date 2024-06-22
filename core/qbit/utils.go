@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-// LoginToQbit login to qbit
-func LoginToQbit(username string, pass string) string {
+// loginToQbit login to qbit
+func loginToQbit(username string, pass string) string {
 	url := qBitBasePath + loginPath
 
 	payload := strings.NewReader(fmt.Sprintf("username=%s&password=%s", username, pass))
@@ -54,8 +54,8 @@ func LoginToQbit(username string, pass string) string {
 	return ""
 }
 
-// MakeGetRequestToClient makes a get request with the specified path and returns json data
-func MakeGetRequestToClient(auth string, path string, isList bool) ([]map[string]interface{}, map[string]interface{}) {
+// makeGetRequestToClient makes a get request with the specified path and returns json data
+func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string]interface{}, map[string]interface{}) {
 	req, err := http.NewRequest("GET", path, strings.NewReader(""))
 	if err != nil {
 		log.Println("Failed to create request.Reason: " + err.Error())
