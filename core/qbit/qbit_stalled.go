@@ -28,10 +28,6 @@ func SearchQbitStalled() {
 		return
 	}
 
-	if auth == "" {
-		log.Println("Auth is empty")
-	}
-
 	allFilters := []string{"stalled", "stalled_downloading"}
 	thresholdTime := time.Hour * 2
 

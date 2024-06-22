@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ctrl/core/config"
 	qbit2 "ctrl/core/qbit"
 	system "ctrl/core/system"
 	"fmt"
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	config.Load()
+
 	port := "8080"
 	result := fmt.Sprintf("0.0.0.0:%s", port)
 
@@ -56,4 +59,8 @@ func test(w http.ResponseWriter, _ *http.Request) {
 
 func status(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func readSettings() {
+
 }
