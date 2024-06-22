@@ -27,7 +27,6 @@ func main() {
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/test", test)
 	//http.HandleFunc("/device", deviceCheck)
-	qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck})
 
 	// start periodic func
 	go runPeriodicTasks()
