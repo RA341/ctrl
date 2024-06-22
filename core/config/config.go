@@ -143,7 +143,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 	// [Network] section
 	secNetwork := createSection(cfg, "Network")
 	secNetwork.Comment = "BE CAREFUL WHEN CHANGING THIS, IT MAY CAUSE THE SERVER TO BECOME INACCESSIBLE"
-	createKey(cfg, secNetwork, "Host", "http://0.0.0.0", "")
+	createKey(cfg, secNetwork, "Host", "0.0.0.0", "Warning do not add 'http://' in front of the ips")
 	createKey(cfg, secNetwork, "Port", "9220", "")
 
 	// [Qbit] section
