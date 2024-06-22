@@ -1,6 +1,8 @@
 package main
 
 import (
+	qbit2 "ctrl/core/qbit"
+	system "ctrl/core/system"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,13 +18,13 @@ func main() {
 	// ui
 
 	// system power controls
-	http.HandleFunc("/shutdown", ExecShutDown)
-	http.HandleFunc("/reboot", ExecReboot)
-	http.HandleFunc("/sleep", ExecSleep)
+	http.HandleFunc("/shutdown", system.ExecShutDown)
+	http.HandleFunc("/reboot", system.ExecReboot)
+	http.HandleFunc("/sleep", system.ExecSleep)
 	// misc stuff
 	http.HandleFunc("/status", status)
-	http.HandleFunc("/device", deviceCheck)
 	http.HandleFunc("/test", test)
+	//http.HandleFunc("/device", deviceCheck)
 
 	// start periodic func
 	go runPeriodicTasks()
@@ -40,7 +42,8 @@ func runPeriodicTasks() {
 
 	for range ticker.C {
 		log.Println("Running stalled torrent search")
-		go SearchQbitStalled()
+		go qbit2.CheckQBitStatus()
+		go qbit2.SearchQbitStalled()
 	}
 }
 

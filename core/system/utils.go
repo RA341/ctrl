@@ -1,4 +1,4 @@
-package main
+package system
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"runtime"
 )
 
-// commands should be formated like [command, arg1, arg2,...]
-func execShell(cmds []string) {
+// ExecShell commands should be formated like [command, arg1, arg2,...]
+func ExecShell(cmds []string) {
 	cmd := exec.Command(cmds[0], cmds[1:]...)
 	// Run the command
 	err := cmd.Run()
@@ -17,6 +17,6 @@ func execShell(cmds []string) {
 	}
 }
 
-func getOS() string {
+func GetOS() string {
 	return runtime.GOOS
 }
