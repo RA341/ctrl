@@ -13,6 +13,8 @@ func main() {
 
 	fmt.Println("Starting server on " + port)
 
+	// ui
+
 	// system power controls
 	http.HandleFunc("/shutdown", ExecShutDown)
 	http.HandleFunc("/reboot", ExecReboot)

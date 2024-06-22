@@ -3,3 +3,8 @@
 /test
 /bin
 /ctrl_transfer_scirpt_wsl_only.sh
+
+# genrated by ci
+package-lock.json
+package.json
+node_modules/
