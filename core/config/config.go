@@ -143,7 +143,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 	// [Network] section
 	secNetwork := createSection(cfg, "Network")
 	secNetwork.Comment = "BE CAREFUL WHEN CHANGING THIS, IT MAY CAUSE THE SERVER TO BECOME INACCESSIBLE"
-	createKey(cfg, secNetwork, "Host", "http://0.0.0.0", "")
+	createKey(cfg, secNetwork, "Host", "0.0.0.0", "Warning do not add 'http://' in front of the ips")
 	createKey(cfg, secNetwork, "Port", "9220", "")
 
 	// [Qbit] section
@@ -152,7 +152,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 	createKey(cfg, secQbit, "host", "http://127.0.0.1", "ip or hostname and port of your qbittorrent instance (remember to add https or http accordingly)")
 	createKey(cfg, secQbit, "port", "8085", "")
 	createKey(cfg, secQbit, "username", "", "")
-	createKey(cfg, secQbit, "password", "", "")
+	createKey(cfg, secQbit, "password", "", "Remember to surround the password with '\"' for eg \"password\" and doe not contain '#'")
 
 	// [notifications.Discord] section
 	secDiscord := createSection(cfg, "notifications.Discord")
