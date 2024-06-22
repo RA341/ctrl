@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"strings"
 )
 
 const helpText = "For more info visit: https://github.com/RA341/ctrl-srv"
@@ -11,9 +12,10 @@ func validateQbitSection() {
 	if config.Qbit.Enable {
 		message := "Qbit is enabled, the following fields must be filled"
 
-		if config.Qbit.Host == "" {
+		if strings.HasPrefix(config.Qbit.Url, "NOHOST") {
 			message += "\nHost is empty\n"
 		}
+
 		if config.Qbit.Pass == "" {
 			message += "\nPassword is empty\n"
 		}

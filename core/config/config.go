@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 type Config struct {
@@ -27,8 +29,7 @@ type NetworkConfig struct {
 
 type QbitConfig struct {
 	Enable bool
-	Host   string
-	Port   int
+	Url    string
 	User   string
 	Pass   string
 	SID    string
@@ -89,10 +90,10 @@ func parseINI(cfg *ini.File) error {
 
 	// Qbit section
 	qbitSection := cfg.Section("Qbit")
+
 	config.Qbit = QbitConfig{
 		Enable: qbitSection.Key("enable").MustBool(true),
-		Host:   qbitSection.Key("host").String(),
-		Port:   qbitSection.Key("port").MustInt(8085),
+		Url:    createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
 		User:   qbitSection.Key("username").String(),
 		Pass:   qbitSection.Key("password").String(),
 		SID:    "",
@@ -110,6 +111,14 @@ func parseINI(cfg *ini.File) error {
 	validateDiscordSection()
 
 	return nil
+}
+
+func createFullUrl(host string, port int) string {
+	if strings.HasPrefix(host, "https") {
+		// if host is https address do not add the port
+		return host
+	}
+	return fmt.Sprintf("%s:%s", host, strconv.Itoa(port))
 }
 
 func CreateDefaultConfigIfNotExists(configPath string) {
