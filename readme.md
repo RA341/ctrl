@@ -1,0 +1,64 @@
+# CTRL srv
+
+This is helpful utility control server I wore to control and monitor my home server
+
+## Install and setup
+
+Grab the latest [release]() store 
+
+TODO
+
+## Features
+
+System
+* Power on
+* Restart
+* Shutdown
+
+Qbit
+* Check client status ( i.e. connected/disconnected/firewalled)
+* Check for stalled torrents
+
+Notifications via
+* Discord
+
+## Settings
+
+Controlled by an ini file with the following usage
+
+**Note: on first run the program creates an empty ini file and then exits, fill this out before starting**
+
+```ini
+[General]
+; DO NOT TOUCH THIS AS THIS WILL MESS WITH UPDATES
+Version = 1.0 
+
+auto_update = true (default) (required)
+
+; how often to check for updates in hours (default is weekly)
+update_interval = 168 (default) (required)
+
+[Network]
+; BE CAREFUL WHEN CHANGING THIS, IT MAY CAUSE THE SERVER TO BECOME INACCESSIBLE
+Host = http://0.0.0.0 (default) (required)  
+Port = 9220 (default) (required)  
+
+[Qbit]
+enable = true (default)
+; ip or hostname and port of your qbittorrent instance ( remember to add https or http accordingly)
+host = http://127.0.0.1 (required)  
+port = 8085 (required)
+
+; username and password of your qbittorrent instance
+user = ....  (required)
+pass = ....  (required)
+
+[notifications.Discord]
+enable = true (default)
+
+; more info https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+discord_webhook_url = 'https://discord.com/api/webhooks/.....' (required)
+
+username = CTRL Bot (default) (required)
+avatar_url = https://i.imgur.com/KEungv8.png (default) (optional) 
+```
