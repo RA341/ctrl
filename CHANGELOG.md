@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/RA341/ctrl-srv/compare/v1.0.0...v1.0.1) (2024-06-22)
+
+
+### Bug Fixes
+
+* changed default host port ([b88cf31](https://github.com/RA341/ctrl-srv/commit/b88cf3105196a3c071c98c64bbcac6d8624fd59c))
+
 # 1.0.0 (2024-06-22)
 
 
