@@ -13,12 +13,7 @@ import (
 
 func main() {
 	config.Load()
-
 	settings := config.Get()
-
-	port := strconv.Itoa(settings.Network.Port)
-	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
-	fmt.Println("Starting server on " + port)
 
 	// TODO ui
 
@@ -33,6 +28,10 @@ func main() {
 
 	// start periodic func
 	go runPeriodicTasks()
+
+	port := strconv.Itoa(settings.Network.Port)
+	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
+	fmt.Println("Starting server on " + port)
 
 	err := http.ListenAndServe(result, nil)
 	if err != nil {
