@@ -2,32 +2,45 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 )
 
-var running = false
-
 func main() {
-
 	port := "8080"
-	result := fmt.Sprintf(":%s", port)
+	result := fmt.Sprintf("0.0.0.0:%s", port)
 
-	// Add the number of tasks to the WaitGroup counter
-	wg.Add(1)
+	fmt.Println("Starting server on " + port)
 
-	// run sync commands
-	periodicRcloneTask()
+	// ui
 
-	http.HandleFunc("/shutdown", shutDownCmd)
-	http.HandleFunc("/reboot", rebootCmd)
+	// system power controls
+	http.HandleFunc("/shutdown", ExecShutDown)
+	http.HandleFunc("/reboot", ExecReboot)
+	http.HandleFunc("/sleep", ExecSleep)
+	// misc stuff
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/device", deviceCheck)
 	http.HandleFunc("/test", test)
 
-	err := http.ListenAndServe(result, nil)
+	// start periodic func
+	go runPeriodicTasks()
 
+	err := http.ListenAndServe(result, nil)
 	if err != nil {
+		fmt.Println(err.Error())
 		return
+	}
+}
+
+func runPeriodicTasks() {
+	ticker := time.NewTicker(time.Hour * 1)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		log.Println("Running stalled torrent search")
+		go SearchQbitStalled()
 	}
 }
 
