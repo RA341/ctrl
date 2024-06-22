@@ -1,10 +1,8 @@
 # CTRL srv
 
-This is helpful utility control server I wore to control and monitor my home server
+A helpful utility server, to control and monitor my home server. 
 
 ## Install and setup
-
-Grab the latest [release]() store 
 
 TODO
 
@@ -21,6 +19,12 @@ Qbit
 
 Notifications via
 * Discord
+
+## Planned
+
+* add docker control
+* implement auto updater
+* implement install script
 
 ## Settings
 

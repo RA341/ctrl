@@ -7,15 +7,22 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"runtime"
 	"strconv"
 	"time"
 )
 
 func main() {
+	if runtime.GOOS == "linux" && !verifyRootStatus() {
+		// todo windows support
+		log.Fatal("The program needs to run with root privileges")
+	}
+
 	config.Load()
 	qbit.InitBasePath()
 
-	settings := config.Get()
+	system.RegisterLinuxService()
 
 	// TODO ui
 
@@ -31,6 +38,7 @@ func main() {
 	// start periodic func
 	go runPeriodicTasks()
 
+	settings := config.Get()
 	port := strconv.Itoa(settings.Network.Port)
 	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
 	fmt.Println("Starting server on " + port)
@@ -61,4 +69,8 @@ func test(w http.ResponseWriter, _ *http.Request) {
 
 func status(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func verifyRootStatus() bool {
+	return os.Geteuid() == 0
 }
