@@ -53,13 +53,13 @@ jobs:
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
     - name: Build
-      run: go build -o ./ctrl-srv_${{ steps.tagName.outputs.tag }}
+      run: go build -o ctrl_linux_${{ steps.tagName.outputs.tag }}
 
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ./ctrl-srv_${{ steps.tagName.outputs.tag }}
+          ctrl_linux_${{ steps.tagName.outputs.tag }}
         tag_name: ${{ steps.tagName.outputs.tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
