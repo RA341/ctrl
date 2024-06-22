@@ -1,28 +1,35 @@
 package main
 
 import (
+	"ctrl/core/config"
+	qbit "ctrl/core/qbit"
+	system "ctrl/core/system"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 func main() {
-	port := "8080"
-	result := fmt.Sprintf("0.0.0.0:%s", port)
+	config.Load()
 
+	settings := config.Get()
+
+	port := strconv.Itoa(settings.Network.Port)
+	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
 	fmt.Println("Starting server on " + port)
 
-	// ui
+	// TODO ui
 
 	// system power controls
-	http.HandleFunc("/shutdown", ExecShutDown)
-	http.HandleFunc("/reboot", ExecReboot)
-	http.HandleFunc("/sleep", ExecSleep)
+	http.HandleFunc("/shutdown", system.ExecShutDown)
+	http.HandleFunc("/reboot", system.ExecReboot)
+	http.HandleFunc("/sleep", system.ExecSleep)
 	// misc stuff
 	http.HandleFunc("/status", status)
-	http.HandleFunc("/device", deviceCheck)
 	http.HandleFunc("/test", test)
+	//http.HandleFunc("/device", deviceCheck)
 
 	// start periodic func
 	go runPeriodicTasks()
@@ -40,7 +47,7 @@ func runPeriodicTasks() {
 
 	for range ticker.C {
 		log.Println("Running stalled torrent search")
-		go SearchQbitStalled()
+		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck})
 	}
 }
 
