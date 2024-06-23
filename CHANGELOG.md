@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/RA341/ctrl-srv/compare/v1.0.1...v1.1.0) (2024-06-23)
+
+
+### Bug Fixes
+
+* a lot qbit issues ([abbca93](https://github.com/RA341/ctrl-srv/commit/abbca93777ba57f525848936b91edc8bb53f180d))
+* changed default host port ([a8caead](https://github.com/RA341/ctrl-srv/commit/a8caeada9d4d1a6dca5579475545833abc6664b9))
+
+
+### Features
+
+* implemented auto registering linux service ([561fe9b](https://github.com/RA341/ctrl-srv/commit/561fe9b13c18c2a147a2b1156ab288c8ddb715b5))
+
 ## [1.0.1](https://github.com/RA341/ctrl-srv/compare/v1.0.0...v1.0.1) (2024-06-22)
 
 
