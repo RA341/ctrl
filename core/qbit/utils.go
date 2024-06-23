@@ -1,6 +1,7 @@
 package qbit
 
 import (
+	"ctrl/core/utils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,13 +11,13 @@ import (
 )
 
 // loginToQbit login to qbit
-func loginToQbit(username string, pass string) string {
-	url := qBitBasePath + loginPath
-
+func loginToQbit(url string, username string, pass string) string {
 	payload := strings.NewReader(fmt.Sprintf("username=%s&password=%s", username, pass))
 
 	req, err := http.NewRequest("POST", url, payload)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Referer", url)
+
 	if err != nil {
 		log.Println("Failed to create request.Reason: " + err.Error())
 		return ""
@@ -47,9 +48,9 @@ func loginToQbit(username string, pass string) string {
 			}
 		}
 
-		log.Println("Failed to get auth cookie. Reason: could not find the 'SID' cookie header")
+		utils.SendWebHook([]byte("Failed to get auth cookie.\nReason: could not find the 'SID' cookie header\nRemember to surround the password with '\"' for eg \"password\" and does not contain '#'"))
 	} else {
-		log.Println("Request failed: " + res.Status)
+		utils.SendWebHook([]byte("Request failed: " + res.Status))
 	}
 	return ""
 }
@@ -86,14 +87,24 @@ func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string
 			return emptyState(isList)
 		}
 
-		var data []map[string]interface{}
+		if isList {
+			var data []map[string]interface{}
+			err = json.Unmarshal(body, &data)
+			if err != nil {
+				log.Println("Failed to unmarshal json", err)
+				return emptyState(isList)
+			}
+			return data, nil
+
+		}
+
+		var data map[string]interface{}
 		err = json.Unmarshal(body, &data)
 		if err != nil {
 			log.Println("Failed to unmarshal json", err)
 			return emptyState(isList)
 		}
-
-		return data, nil
+		return nil, data
 
 	} else {
 		log.Println("Request failed: " + res.Status)
@@ -106,5 +117,8 @@ func emptyState(isList bool) ([]map[string]interface{}, map[string]interface{}) 
 		return []map[string]interface{}{}, nil
 	}
 	return nil, map[string]interface{}{}
+}
 
+func getQbitBasePath() string {
+	return qbitBasePath
 }

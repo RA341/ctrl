@@ -5,8 +5,7 @@ import (
 	"fmt"
 )
 
-func checkClientStatus(auth string) {
-	url := qBitBasePath + clientStatusPath
+func checkClientStatus(auth string, url string) {
 	_, data := makeGetRequestToClient(auth, url, false)
 
 	val, ok := data["connection_status"]

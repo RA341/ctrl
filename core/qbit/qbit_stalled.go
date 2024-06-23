@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-var (
-	qBitBasePath = fmt.Sprintf("%s/api/v2", config.Get().Qbit.Url)
-)
-
 const (
 	loginPath        = "/auth/login"
 	listTorrentsPath = "/torrents/info"
@@ -110,7 +106,7 @@ func timeSinceAdd(torrent map[string]interface{}) time.Duration {
 
 // getStalledTorrents get all stalled torrents with last active greater than some time
 func getStalledTorrents(auth string, filter string) []map[string]interface{} {
-	url := qBitBasePath + listTorrentsPath + "?filter=" + filter
+	url := qbitBasePath + listTorrentsPath + "?filter=" + filter
 	res, _ := makeGetRequestToClient(auth, url, true)
 	return res
 }
