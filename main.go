@@ -4,6 +4,7 @@ import (
 	"ctrl/core/config"
 	qbit "ctrl/core/qbit"
 	system "ctrl/core/system"
+	"ctrl/core/updater"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,6 +15,9 @@ import (
 )
 
 func main() {
+	fmt.Printf("Flavour: %s\n Version: %s\nCommit: %s\nBuild Date: %s\n", updater.Date,
+		updater.Version, updater.Commit, updater.Date)
+
 	if runtime.GOOS == "linux" && !verifyRootStatus() {
 		// todo windows support
 		log.Fatal("The program needs to run with root privileges")
