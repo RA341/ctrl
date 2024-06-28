@@ -57,8 +57,8 @@ jobs:
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
     - name: Build
-      run: go build -ldflags "-w -s" -o ctrl_linux_${{ steps.tagName.outputs.tag }}
 
+      run: go build -ldflags "-w -s -X ctrl/core/updater.Flavour="prod" ctrl/core/updater.Version=${{ steps.tagName.outputs.tag }} -X ctrl/core/updater.Commit=$(git rev-parse HEAD) -X 'ctrl/core/updater.Date=$(date)'" -o ctrl_linux_${{ steps.tagName.outputs.tag }}
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v2
       with:
