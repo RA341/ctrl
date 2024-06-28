@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
-func RegisterLinuxService() {
+func registerLinuxService() {
 	if checkServiceLocation() {
 		fmt.Printf("Service file exists, no need to register")
 		return
@@ -28,12 +29,26 @@ func RegisterLinuxService() {
 	mvServiceFile(serviceFile)
 }
 
+func RegisterService() {
+	if runtime.GOOS == "linux" {
+		registerLinuxService()
+	} else if runtime.GOOS == "windows" {
+		registerWindowsService()
+	} else {
+		fmt.Println("Unsupported os, no action will be taken")
+	}
+}
+
+func registerWindowsService() {
+	fmt.Println("Warning: registering a service on windows is not yet support, no action will be taken")
+}
+
 func checkServiceLocation() bool {
-	_, err := os.Stat("/etc/systemd/system/ctrl.service")
+	_, err := os.Stat("/etc/systemd/system/ctrl.service\n")
 	if err == nil {
 		return true
 	} else if os.IsNotExist(err) {
-		fmt.Printf("No service file found, registering...")
+		fmt.Println("No service file found, registering...")
 		return false
 	} else {
 		fmt.Printf("Error checking file: %v\n", err)
