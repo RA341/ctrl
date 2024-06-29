@@ -8,6 +8,20 @@ import (
 	"runtime"
 )
 
+func RegisterService() {
+	if runtime.GOOS == "linux" {
+		registerLinuxService()
+	} else if runtime.GOOS == "windows" {
+		registerWindowsService()
+	} else {
+		fmt.Println("Unsupported os, no action will be taken")
+	}
+}
+
+func registerWindowsService() {
+	fmt.Println("Warning: registering a service on windows is not yet support, no action will be taken")
+}
+
 func registerLinuxService() {
 	if checkServiceLocation() {
 		fmt.Printf("Service file exists, no need to register")
@@ -27,20 +41,6 @@ func registerLinuxService() {
 	}
 
 	mvServiceFile(serviceFile)
-}
-
-func RegisterService() {
-	if runtime.GOOS == "linux" {
-		registerLinuxService()
-	} else if runtime.GOOS == "windows" {
-		registerWindowsService()
-	} else {
-		fmt.Println("Unsupported os, no action will be taken")
-	}
-}
-
-func registerWindowsService() {
-	fmt.Println("Warning: registering a service on windows is not yet support, no action will be taken")
 }
 
 func checkServiceLocation() bool {
