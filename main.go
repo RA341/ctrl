@@ -17,12 +17,12 @@ import (
 )
 
 func main() {
-	fmt.Printf("Flavour: %s\n Version: %s\nCommit: %s\nBuild Date: %s\n", updater.Date,
-		updater.Version, updater.Commit, updater.Date)
+	fmt.Printf("CTRL Version: %s", updater.Version)
 
 	if runtime.GOOS == "linux" && !verifyRootStatus() {
-		// todo windows support
 		log.Fatal("The program needs to run with root privileges")
+	} else if runtime.GOOS == "windows" && !verifyRootStatus() {
+		// todo windows support
 	}
 
 	config.Load()
