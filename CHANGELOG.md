@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/RA341/ctrl-srv/compare/v1.2.0...v1.2.1) (2024-07-13)
+
+
+### Bug Fixes
+
+* remove bin info ([f5f3029](https://github.com/RA341/ctrl-srv/commit/f5f302938df5bacfeb85145429319d34e727fbff))
+
 # [1.2.0](https://github.com/RA341/ctrl-srv/compare/v1.1.0...v1.2.0) (2024-07-13)
 
 
