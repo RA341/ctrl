@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/RA341/ctrl-srv/compare/v1.1.0...v1.2.0) (2024-07-13)
+
+
+### Bug Fixes
+
+* added registering os aware services ([cfe98d8](https://github.com/RA341/ctrl-srv/commit/cfe98d8c567879f59b4175e2b89d0898fb2ff076))
+
+
+### Features
+
+* added docker integration with qbit integration ([fafebe6](https://github.com/RA341/ctrl-srv/commit/fafebe60fa1eeede25e81ff85ab4f8e8f4a0dbf5))
+
 # [1.1.0](https://github.com/RA341/ctrl-srv/compare/v1.0.1...v1.1.0) (2024-06-23)
 
 
