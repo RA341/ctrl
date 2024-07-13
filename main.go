@@ -2,9 +2,12 @@ package main
 
 import (
 	"ctrl/core/config"
+	"ctrl/core/docker"
 	qbit "ctrl/core/qbit"
 	system "ctrl/core/system"
+	"ctrl/core/updater"
 	"fmt"
+	"github.com/docker/docker/client"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +17,9 @@ import (
 )
 
 func main() {
+	fmt.Printf("Flavour: %s\n Version: %s\nCommit: %s\nBuild Date: %s\n", updater.Date,
+		updater.Version, updater.Commit, updater.Date)
+
 	if runtime.GOOS == "linux" && !verifyRootStatus() {
 		// todo windows support
 		log.Fatal("The program needs to run with root privileges")
@@ -22,7 +28,10 @@ func main() {
 	config.Load()
 	qbit.InitBasePath()
 
-	system.RegisterLinuxService()
+	system.RegisterService()
+
+	cli := docker.InitDocker()
+	defer docker.DisposeDocker(cli)
 
 	// TODO ui
 
@@ -36,7 +45,7 @@ func main() {
 	//http.HandleFunc("/device", deviceCheck)
 
 	// start periodic func
-	go runPeriodicTasks()
+	go runPeriodicTasks(cli)
 
 	settings := config.Get()
 	port := strconv.Itoa(settings.Network.Port)
@@ -50,13 +59,13 @@ func main() {
 	}
 }
 
-func runPeriodicTasks() {
+func runPeriodicTasks(cli *client.Client) {
 	ticker := time.NewTicker(time.Hour * 1)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		log.Println("Running stalled torrent search")
-		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck})
+		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck}, cli)
 	}
 }
 

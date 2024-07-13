@@ -12,8 +12,7 @@ func ExecShell(cmds []string) {
 	// Run the command
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println("Whoa there, something went wrong!")
-		println(err.Error())
+		fmt.Println("Error running", cmd, err)
 	}
 }
 

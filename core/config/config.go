@@ -20,6 +20,7 @@ type Config struct {
 type GeneralConfig struct {
 	AutoUpdate     bool
 	UpdateInterval int
+	EnableDocker   bool
 }
 
 type NetworkConfig struct {
@@ -28,11 +29,12 @@ type NetworkConfig struct {
 }
 
 type QbitConfig struct {
-	Enable bool
-	Url    string
-	User   string
-	Pass   string
-	SID    string
+	Enable        bool
+	Url           string
+	User          string
+	Pass          string
+	SID           string
+	ContainerName string
 }
 
 type DiscordNotifConfig struct {
@@ -78,6 +80,7 @@ func parseINI(cfg *ini.File) error {
 	config.General = GeneralConfig{
 		AutoUpdate:     generalSection.Key("auto_update").MustBool(true),
 		UpdateInterval: generalSection.Key("update_interval").MustInt(168),
+		EnableDocker:   generalSection.Key("enable_docker").MustBool(false),
 	}
 
 	// Network section
@@ -92,11 +95,12 @@ func parseINI(cfg *ini.File) error {
 	qbitSection := cfg.Section("Qbit")
 
 	config.Qbit = QbitConfig{
-		Enable: qbitSection.Key("enable").MustBool(true),
-		Url:    createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
-		User:   qbitSection.Key("username").String(),
-		Pass:   qbitSection.Key("password").String(),
-		SID:    "",
+		Enable:        qbitSection.Key("enable").MustBool(true),
+		Url:           createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
+		User:          qbitSection.Key("username").String(),
+		Pass:          qbitSection.Key("password").String(),
+		SID:           "",
+		ContainerName: qbitSection.Key("container_name").String(),
 	}
 	validateQbitSection()
 
@@ -139,6 +143,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 	secGeneral := createSection(cfg, "General")
 	createKey(cfg, secGeneral, "auto_update", "true", "")
 	createKey(cfg, secGeneral, "update_interval", "168", "how often to check for updates in hours (default is weekly)")
+	createKey(cfg, secGeneral, "enable_docker", "false", "Enable support for controlling docker")
 
 	// [Network] section
 	secNetwork := createSection(cfg, "Network")
@@ -153,6 +158,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 	createKey(cfg, secQbit, "port", "8085", "")
 	createKey(cfg, secQbit, "username", "", "")
 	createKey(cfg, secQbit, "password", "", "Remember to surround the password with '\"' for eg \"password\" and doe not contain '#'")
+	createKey(cfg, secQbit, "container_name", "qbittorrent", "Name of your qbit docker container")
 
 	// [notifications.Discord] section
 	secDiscord := createSection(cfg, "notifications.Discord")
