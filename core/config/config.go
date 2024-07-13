@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/ini.v1"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -56,7 +56,7 @@ func Load() {
 	// Get the current working directory
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Fatal(fmt.Errorf("failed to get current working directory: %w", err))
+		log.Fatal().Err(err).Msgf("failed to get current working directory")
 	}
 	configPath := filepath.Join(cwd, defaultConfigFileName)
 
@@ -64,12 +64,12 @@ func Load() {
 
 	iniCfg, err := ini.Load(configPath)
 	if err != nil {
-		log.Fatal("Failed to load config file:", err)
+		log.Fatal().Err(err).Msgf("Failed to load config file")
 	}
 
 	err = parseINI(iniCfg)
 	if err != nil {
-		log.Fatal("Failed to parse config file:", err)
+		log.Fatal().Err(err).Msgf("Failed to parse config file")
 	}
 
 }
@@ -80,7 +80,6 @@ func parseINI(cfg *ini.File) error {
 	config.General = GeneralConfig{
 		AutoUpdate:     generalSection.Key("auto_update").MustBool(true),
 		UpdateInterval: generalSection.Key("update_interval").MustInt(168),
-		EnableDocker:   generalSection.Key("enable_docker").MustBool(false),
 	}
 
 	// Network section
@@ -95,7 +94,6 @@ func parseINI(cfg *ini.File) error {
 	qbitSection := cfg.Section("Qbit")
 
 	config.Qbit = QbitConfig{
-		Enable:        qbitSection.Key("enable").MustBool(true),
 		Url:           createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
 		User:          qbitSection.Key("username").String(),
 		Pass:          qbitSection.Key("password").String(),
@@ -133,7 +131,7 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 		return
 	} else if !os.IsNotExist(err) {
 		// Some other error occurred
-		log.Fatal(fmt.Errorf("error checking config file: %w", err))
+		log.Fatal().Err(err).Msgf("error checking config file")
 	}
 
 	// Create a new INI file
@@ -169,16 +167,16 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 
 	// Save the file
 	if err := cfg.SaveTo(configPath); err != nil {
-		log.Fatal(fmt.Errorf("failed to save default config file: %w", err))
+		log.Fatal().Err(err).Msg("failed to save default config file")
 	}
 
-	fmt.Printf("Created default config file at: %s\nIf you see any errors below, fill the required fields first", configPath)
+	log.Info().Msgf("Created default config file at: %s\nIf you see any errors below, fill the required fields first", configPath)
 }
 
 func createSection(cfg *ini.File, section string) *ini.Section {
 	createdSection, err := cfg.NewSection(section)
 	if err != nil {
-		log.Fatal(fmt.Errorf("error creating section %s: %w", section, err))
+		log.Fatal().Err(err).Msgf("error creating section %s", section)
 	}
 	return createdSection
 }
@@ -186,7 +184,7 @@ func createSection(cfg *ini.File, section string) *ini.Section {
 func createKey(cfg *ini.File, section *ini.Section, key string, value string, comment string) {
 	createdKey, err := section.NewKey(key, value)
 	if err != nil {
-		log.Fatal(fmt.Errorf("error creating key %s: %w", key, err))
+		log.Fatal().Err(err).Msgf("error creating key %s", key)
 	}
 	createdKey.Comment = comment
 }

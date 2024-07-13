@@ -4,8 +4,8 @@ import (
 	"ctrl/core/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -19,21 +19,21 @@ func loginToQbit(url string, username string, pass string) string {
 	req.Header.Add("Referer", url)
 
 	if err != nil {
-		log.Println("Failed to create request.Reason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to create request.")
 		return ""
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Println("Failed to send request\nReason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to send request")
 		return ""
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Println("Failed to close buffer body")
+			log.Error().Err(err).Msg("Failed to close buffer body")
 			return
 		}
 	}(res.Body)
@@ -59,7 +59,7 @@ func loginToQbit(url string, username string, pass string) string {
 func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string]interface{}, map[string]interface{}) {
 	req, err := http.NewRequest("GET", path, strings.NewReader(""))
 	if err != nil {
-		log.Println("Failed to create request.Reason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to create request")
 		return emptyState(isList)
 	}
 
@@ -68,14 +68,14 @@ func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Println("Failed to send request\nReason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to send request")
 		return emptyState(isList)
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Println("Failed to close buffer body")
+			log.Error().Err(err).Msg("Failed to close request buffer body")
 			return
 		}
 	}(res.Body)
@@ -83,7 +83,7 @@ func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string
 	if res.StatusCode == 200 {
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Println("Failed to read body", err)
+			log.Error().Err(err).Msg("Failed to read request body")
 			return emptyState(isList)
 		}
 
@@ -91,7 +91,7 @@ func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string
 			var data []map[string]interface{}
 			err = json.Unmarshal(body, &data)
 			if err != nil {
-				log.Println("Failed to unmarshal json", err)
+				log.Error().Err(err).Msg("Failed to unmarshal json")
 				return emptyState(isList)
 			}
 			return data, nil
@@ -101,13 +101,13 @@ func makeGetRequestToClient(auth string, path string, isList bool) ([]map[string
 		var data map[string]interface{}
 		err = json.Unmarshal(body, &data)
 		if err != nil {
-			log.Println("Failed to unmarshal json", err)
+			log.Error().Err(err).Msg("Failed to unmarshal json")
 			return emptyState(isList)
 		}
 		return nil, data
 
 	} else {
-		log.Println("Request failed: " + res.Status)
+		log.Error().Msgf("Request failed: " + res.Status)
 	}
 	return emptyState(isList)
 }
