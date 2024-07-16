@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/RA341/ctrl-srv/compare/v1.2.1...v1.3.0) (2024-07-16)
+
+
+### Features
+
+* added proper logging ([41b5781](https://github.com/RA341/ctrl-srv/commit/41b578118f798031c7ed4a9208faf5de5a05946a))
+
 ## [1.2.1](https://github.com/RA341/ctrl-srv/compare/v1.2.0...v1.2.1) (2024-07-13)
 
 
