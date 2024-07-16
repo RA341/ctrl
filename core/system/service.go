@@ -44,7 +44,7 @@ func registerLinuxService() {
 }
 
 func checkServiceLocation() bool {
-	_, err := os.Stat("/etc/systemd/system/ctrl.service\n")
+	_, err := os.Stat("/etc/systemd/system/ctrl.service")
 	if err == nil {
 		return true
 	} else if os.IsNotExist(err) {
