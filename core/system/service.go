@@ -19,12 +19,12 @@ func RegisterService() {
 }
 
 func registerWindowsService() {
-	log.Debug().Msg("Warning: registering a service on windows is not yet support, no action will be taken")
+	log.Warn().Msg("Registering a service on windows is not yet support, no action will be taken")
 }
 
 func registerLinuxService() {
 	if checkServiceLocation() {
-		log.Debug().Msg("Service file exists, no need to register")
+		log.Debug().Msg("Service file exists")
 		return
 	}
 
@@ -87,6 +87,7 @@ func mvServiceFile(servicePath string) {
 	}
 
 	log.Debug().Msgf("File moved successfully from %s to %s\n", servicePath, destination)
+	log.Info().Msg("Register the service file by running 'systemctl daemon-reload'")
 }
 
 func createServiceFile(execLoc string, cwd string) string {
