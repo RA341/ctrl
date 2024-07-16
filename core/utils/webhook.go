@@ -1,15 +1,16 @@
 package utils
 
 import (
+	"ctrl/core/config"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 	"strings"
 )
 
-const webhookUrl = "https://discord.com/api/webhooks/1223892724537753661/5VvQzM9chKTUYkAxit3ddAf__8s_dybIbBQ2sB33n7S7RHgn4OzQ27XgXZ0f2qbP0S7w"
-
 func SendWebHook(message []byte) bool {
+	webhookUrl := config.Get().DiscordNotif.WebhookURL
+
 	payload := strings.NewReader(string(message))
 
 	req, err := http.NewRequest("POST", webhookUrl, payload)
