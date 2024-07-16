@@ -5,7 +5,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/ini.v1"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -175,8 +174,8 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 
 	log.Info().Msgf("Created default config file at: %s", configPath)
 	log.Info().
-		Str("Then restart the program by running", "'sudo systemctl stop ctrl.service'").
-		Msg("This is a first time run fill out the config, Follow the instructions to restart the program")
+		Str("Then restart the program by running", "sudo systemctl stop ctrl.service").
+		Msg("This is a first time run, check the config first")
 }
 
 func createSection(cfg *ini.File, section string) *ini.Section {
@@ -196,12 +195,7 @@ func createKey(cfg *ini.File, section *ini.Section, key string, value string, co
 }
 
 func setPermissions(filepath string) {
-	uid, gid := getCurrentUserId()
-
-	if uid == -1 || gid == -1 {
-		log.Warn().Msg("No user or group found")
-		return
-	}
+	uid, gid := 1000, 1000
 
 	// Create file with current user's permissions
 	file, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
@@ -221,26 +215,4 @@ func setPermissions(filepath string) {
 	}
 
 	log.Info().Msgf("Set permissions for %s", filepath)
-}
-
-func getCurrentUserId() (int, int) {
-	// Get current user
-	currentUser, err := user.Current()
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get current user")
-		return -1, -1
-	}
-
-	uid, err := strconv.Atoi(currentUser.Uid)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to parse UID")
-		return -1, -1
-	}
-	gid, err := strconv.Atoi(currentUser.Gid)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to parse GID")
-		return -1, -1
-	}
-
-	return uid, gid
 }

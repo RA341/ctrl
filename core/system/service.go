@@ -87,7 +87,7 @@ func mvServiceFile(servicePath string) {
 	}
 
 	log.Debug().Msgf("File moved successfully from %s to %s\n", servicePath, destination)
-	log.Info().Msg("Register the service file by running 'systemctl daemon-reload'")
+	log.Info().Msg("Enable the service by running 'systemctl daemon-reload'")
 }
 
 func createServiceFile(execLoc string, cwd string) string {
