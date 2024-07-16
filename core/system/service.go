@@ -2,7 +2,7 @@ package system
 
 import (
 	"fmt"
-	"log"
+	"github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,29 +14,29 @@ func RegisterService() {
 	} else if runtime.GOOS == "windows" {
 		registerWindowsService()
 	} else {
-		fmt.Println("Unsupported os, no action will be taken")
+		log.Info().Msg("Unsupported os, no action will be taken")
 	}
 }
 
 func registerWindowsService() {
-	fmt.Println("Warning: registering a service on windows is not yet support, no action will be taken")
+	log.Debug().Msg("Warning: registering a service on windows is not yet support, no action will be taken")
 }
 
 func registerLinuxService() {
 	if checkServiceLocation() {
-		fmt.Printf("Service file exists, no need to register")
+		log.Debug().Msg("Service file exists, no need to register")
 		return
 	}
 
 	execLoc, cwd := getCWDAndExecLocations()
 	if execLoc == "" || cwd == "" {
-		log.Print("Error failed to find executable location or current working dir")
+		log.Error().Msg("Error failed to find executable location or current working dir")
 		return
 	}
 
 	serviceFile := createServiceFile(execLoc, cwd)
 	if serviceFile == "" {
-		log.Print("Error create service file")
+		log.Error().Msg("Could not create service file")
 		return
 	}
 
@@ -48,10 +48,10 @@ func checkServiceLocation() bool {
 	if err == nil {
 		return true
 	} else if os.IsNotExist(err) {
-		fmt.Println("No service file found, registering...")
+		log.Info().Msg("No service file found, registering...")
 		return false
 	} else {
-		fmt.Printf("Error checking file: %v\n", err)
+		log.Error().Err(err).Msg("Error checking service file")
 		return false
 	}
 }
@@ -59,7 +59,7 @@ func checkServiceLocation() bool {
 func getCWDAndExecLocations() (string, string) {
 	execLoc, err := os.Executable()
 	if err != nil {
-		fmt.Print(fmt.Sprintf("Could not find executable location: %s", err))
+		log.Debug().Err(err).Msg("Could not find executable location")
 		return "", ""
 	}
 
@@ -67,12 +67,12 @@ func getCWDAndExecLocations() (string, string) {
 
 	_, err = os.Stat(execLoc)
 	if err == nil {
-		fmt.Printf("The file exists\n")
+		log.Debug().Msg("The file exists")
 		return execLoc, cwd
 	} else if os.IsNotExist(err) {
 		return "", ""
 	} else {
-		fmt.Printf("Error checking file: %v\n", err)
+		log.Debug().Err(err).Msg("Error checking file: %v")
 		return "", ""
 	}
 }
@@ -82,11 +82,11 @@ func mvServiceFile(servicePath string) {
 
 	err := os.Rename(servicePath, destination)
 	if err != nil {
-		fmt.Printf("Error moving file: %v\n", err)
+		log.Error().Err(err).Msg("Error moving service file to systemd")
 		return
 	}
 
-	fmt.Printf("File moved successfully from %s to %s\n", servicePath, destination)
+	log.Debug().Msgf("File moved successfully from %s to %s\n", servicePath, destination)
 }
 
 func createServiceFile(execLoc string, cwd string) string {
@@ -109,10 +109,10 @@ WantedBy=multi-user.target
 
 	err := os.WriteFile(serviceFile, contents, 0644)
 	if err != nil {
-		log.Print("Error creating service file")
+		log.Error().Err(err).Msg("Error creating service file")
 		return ""
 	}
 
-	log.Print("Created service file")
+	log.Debug().Msg("Created service file")
 	return cwd + "/" + serviceFile
 }

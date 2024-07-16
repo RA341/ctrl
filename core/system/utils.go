@@ -1,7 +1,7 @@
 package system
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"os/exec"
 	"runtime"
 )
@@ -12,7 +12,7 @@ func ExecShell(cmds []string) {
 	// Run the command
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println("Error running", cmd, err)
+		log.Error().Err(err).Msgf("Error running: %s", cmd)
 	}
 }
 

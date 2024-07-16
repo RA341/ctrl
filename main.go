@@ -8,7 +8,8 @@ import (
 	"ctrl/core/updater"
 	"fmt"
 	"github.com/docker/docker/client"
-	"log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"runtime"
@@ -17,10 +18,12 @@ import (
 )
 
 func main() {
-	fmt.Printf("CTRL Version: %s", updater.Version)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
+	log.Info().Msgf("CTRL Version: %s", updater.Version)
 
 	if runtime.GOOS == "linux" && !verifyRootStatus() {
-		log.Fatal("The program needs to run with root privileges")
+		log.Fatal().Msg("The program needs to run with root privileges")
 	} else if runtime.GOOS == "windows" && !verifyRootStatus() {
 		// todo windows support
 	}
@@ -50,7 +53,7 @@ func main() {
 	settings := config.Get()
 	port := strconv.Itoa(settings.Network.Port)
 	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
-	fmt.Println("Starting server on " + port)
+	log.Info().Msg("Starting server on " + port)
 
 	err := http.ListenAndServe(result, nil)
 	if err != nil {
@@ -64,7 +67,7 @@ func runPeriodicTasks(cli *client.Client) {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		log.Println("Running stalled torrent search")
+		log.Info().Msg("Running stalled torrent search")
 		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck}, cli)
 	}
 }

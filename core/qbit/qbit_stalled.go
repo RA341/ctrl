@@ -5,7 +5,7 @@ import (
 	utils "ctrl/core/utils"
 	"encoding/json"
 	"fmt"
-	"log"
+	"github.com/rs/zerolog/log"
 	"time"
 )
 
@@ -43,7 +43,7 @@ func formatDiscordMessage(stalled map[string]interface{}) (error, []byte) {
 
 	marshal, err := json.Marshal(discordContent)
 	if err != nil {
-		log.Println("Failed to convert back to JSON")
+		log.Error().Err(err).Msg("Failed to convert back to JSON")
 		return nil, nil
 	}
 	return err, marshal
@@ -70,11 +70,11 @@ func notifyStalledTorrents(stalled []map[string]interface{}, threshHold time.Dur
 			}
 			err, message := formatDiscordMessage(torrent)
 			if err != nil {
-				log.Println("Failed to format data")
+				log.Error().Err(err).Msg("Failed to format data")
 			}
 			utils.SendWebHook(message)
 		} else {
-			log.Println("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
+			log.Debug().Msgf("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
 		}
 	}
 }
@@ -88,12 +88,12 @@ func notifyDownloadingMetadataTorrents(metaDown []map[string]interface{}, thresh
 		if duration.Hours() >= threshHold.Hours() && torrent["state"] == "metaDL" {
 			err, marshal := formatDiscordMessage(torrent)
 			if err != nil {
-				log.Println("Failed to format data")
+				log.Error().Err(err).Msg("Failed to format data")
 				continue
 			}
 			utils.SendWebHook(marshal)
 		} else {
-			log.Println("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
+			log.Debug().Msgf("[INFO] Torrent " + torrent["name"].(string) + "does not meet the criteria")
 		}
 	}
 }
