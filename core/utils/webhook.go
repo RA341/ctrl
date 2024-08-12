@@ -2,10 +2,13 @@ package utils
 
 import (
 	"ctrl/core/config"
+	"ctrl/core/updater"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func SendWebHook(message []byte) bool {
@@ -41,5 +44,13 @@ func SendWebHook(message []byte) bool {
 	} else {
 		log.Error().Msgf("Request failed: %s", res.Status)
 		return false
+	}
+}
+
+func WebhookStatus() {
+	message := fmt.Sprintf("CTRL Version: %s, system started on %s", updater.Version, time.Now().Format("2006-01-02 15:04:05"))
+	res := SendWebHook([]byte(message))
+	if !res {
+		log.Warn().Msg("Failed to send webhook, verify webhook settings")
 	}
 }

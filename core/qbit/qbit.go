@@ -5,6 +5,7 @@ import (
 	"ctrl/core/utils"
 	"fmt"
 	"github.com/docker/docker/client"
+	"github.com/rs/zerolog/log"
 )
 
 type Check int
@@ -35,6 +36,21 @@ func RunQbitChecks(checkFilter []Check, cli *client.Client) {
 		runCheckFunc(checkItem, auth, cli)
 	}
 
+}
+
+// Status logs into to qbit once to check if it is properly setup
+func Status() {
+	if !config.Get().Qbit.Enable {
+		log.Debug().
+			Bool("Qbit setting", config.Get().Qbit.Enable).
+			Msg("Qbit is disabled")
+		return
+	}
+
+	res := loginToQbit(config.Get().Qbit.Url, config.Get().Qbit.User, config.Get().Qbit.Pass)
+	if res == "" {
+		log.Warn().Msg("Qbit is not working, check the qbit config")
+	}
 }
 
 func runCheckFunc(checkFilter Check, auth string, cli *client.Client) {

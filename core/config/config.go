@@ -94,6 +94,7 @@ func parseINI(cfg *ini.File) error {
 	qbitSection := cfg.Section("Qbit")
 
 	config.Qbit = QbitConfig{
+		Enable:        qbitSection.Key("enable").MustBool(true),
 		Url:           createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
 		User:          qbitSection.Key("username").String(),
 		Pass:          qbitSection.Key("password").String(),

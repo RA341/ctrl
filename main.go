@@ -2,10 +2,10 @@ package main
 
 import (
 	"ctrl/core/config"
-	"ctrl/core/docker"
 	qbit "ctrl/core/qbit"
 	system "ctrl/core/system"
 	"ctrl/core/updater"
+	"ctrl/core/utils"
 	"fmt"
 	"github.com/docker/docker/client"
 	"github.com/rs/zerolog"
@@ -29,14 +29,19 @@ func main() {
 	}
 
 	config.Load()
-	qbit.InitBasePath()
+	//qbit.InitBasePath()
+	//system.RegisterService()
 
-	system.RegisterService()
+	//cli := docker.InitDocker()
+	//defer docker.DisposeDocker(cli)
 
-	cli := docker.InitDocker()
-	defer docker.DisposeDocker(cli)
+	// system checks
+	//SystemStatus()
+	//docker.ListDocker(cli)
 
-	// TODO ui
+	// frontend
+	fs := http.FileServer(http.Dir("./frontend/build"))
+	http.Handle("/", fs)
 
 	// system power controls
 	http.HandleFunc("/shutdown", system.ExecShutDown)
@@ -48,7 +53,7 @@ func main() {
 	//http.HandleFunc("/device", deviceCheck)
 
 	// start periodic func
-	go runPeriodicTasks(cli)
+	//go runPeriodicTasks(cli)
 
 	settings := config.Get()
 	port := strconv.Itoa(settings.Network.Port)
@@ -85,4 +90,9 @@ func status(w http.ResponseWriter, _ *http.Request) {
 
 func verifyRootStatus() bool {
 	return os.Geteuid() == 0
+}
+
+func SystemStatus() {
+	qbit.Status()
+	utils.WebhookStatus()
 }

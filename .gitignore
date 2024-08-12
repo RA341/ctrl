@@ -5,8 +5,6 @@
 /tests/compose
 
 # genrated by ci
-package-lock.json
-package.json
 node_modules/
 *ini
 .idea

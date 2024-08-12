@@ -12,7 +12,10 @@ import (
 
 // loginToQbit login to qbit
 func loginToQbit(url string, username string, pass string) string {
-	payload := strings.NewReader(fmt.Sprintf("username=%s&password=%s", username, pass))
+	a := fmt.Sprintf("username=%s&password=%s", username, pass)
+	payload := strings.NewReader(a)
+
+	log.Debug().Msgf("Sending login %s", a)
 
 	req, err := http.NewRequest("POST", url, payload)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -39,7 +42,6 @@ func loginToQbit(url string, username string, pass string) string {
 	}(res.Body)
 
 	if res.StatusCode == 200 {
-
 		cookies := res.Cookies()
 
 		for _, cookie := range cookies {
@@ -47,9 +49,10 @@ func loginToQbit(url string, username string, pass string) string {
 				return cookie.Value
 			}
 		}
-
+		log.Error().Any("Request state", res).Msg("Failed to get auth cookie.")
 		utils.SendWebHook([]byte("Failed to get auth cookie.\nReason: could not find the 'SID' cookie header\nRemember to surround the password with '\"' for eg \"password\" and does not contain '#'"))
 	} else {
+		log.Error().Any("Request state", res).Msgf("Request failed: " + res.Status)
 		utils.SendWebHook([]byte("Request failed: " + res.Status))
 	}
 	return ""
