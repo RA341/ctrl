@@ -87,5 +87,5 @@ protoc --go_grpc_out=. --go_out=. .\protos\filesystem.proto
 To generate Dart grpc client files
 
 ```bash
-protoc --dart_out=grpc:client/lib/generated -I. hello.proto
+protoc --dart_out=grpc:client/lib/ -I. .\protos\filesystem.proto
 ```

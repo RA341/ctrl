@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"errors"
 	"github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
@@ -17,36 +18,68 @@ func ChangeUserPermission(path string) {
 	}
 }
 
-func ChangeDirectory(path string) string {
-	err := os.Chdir(path)
+func CreateFolder(path string) error {
+	err := os.MkdirAll(path, 0750)
 	if err != nil {
-		log.Error().Err(err).Msgf("Failed to change directory for path %s", path)
-		return ""
+		log.Error().Err(err).Msgf("Failed to create folder for path %s", path)
+		return err
 	}
-	return path
+	ChangeUserPermission(path)
+	return nil
 }
 
-func LinkFolder(src string, dest string) {
-	entries := ListDir(src)
-	if entries == nil {
-		log.Error().Msgf("Failed to list folder %s", src)
-		return
+func isDirectory(path string) (bool, error) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return false, err
 	}
+	return fileInfo.IsDir(), nil
+}
+
+func LinkFolder(src string, dest string) error {
+	log.Info().Msgf("Linking folder")
 
 	err := os.MkdirAll(dest, 0750)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to make directory for path %s", dest)
-		return
+		return nil
 	}
 	ChangeUserPermission(dest)
 
+	isDir, err := isDirectory(src)
+	if err != nil {
+		return err
+	}
+	if !isDir {
+		log.Info().Msg("Linking src file to dest dir")
+		err := os.Link(src, dest+"/"+filepath.Base(src))
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	entries := ListDir(src)
+	if entries == nil {
+		log.Error().Msgf("Failed to list folder %s", src)
+		return errors.New("failed to list folder")
+	}
+
 	for _, entry := range entries {
 		if entry.IsDir() {
-			LinkFolder(src+"/"+entry.Name(), dest+"/"+entry.Name())
+			err := LinkFolder(src+"/"+entry.Name(), dest+"/"+entry.Name())
+			if err != nil {
+				return err
+			}
 			continue
 		}
-		LinkFile(src+"/"+entry.Name(), dest+"/"+entry.Name())
+		err := LinkFile(src+"/"+entry.Name(), dest+"/"+entry.Name())
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func ListDir(dir string) []os.DirEntry {
@@ -59,12 +92,13 @@ func ListDir(dir string) []os.DirEntry {
 	return entries
 }
 
-func LinkFile(src string, dest string) {
+func LinkFile(src string, dest string) error {
 	err := os.Link(src, dest)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to link file %s to %s", src, dest)
-		return
+		return err
 	}
+	return nil
 }
 
 func ParseDir(filePath string, entries []os.DirEntry) *Folder {
