@@ -26,7 +26,7 @@ Notifications via
 * implement auto updater
 * implement install script
 
-## Settings
+## Preferences
 
 Controlled by an ini file with the following usage
 
@@ -65,4 +65,27 @@ discord_webhook_url = 'https://discord.com/api/webhooks/.....' (required)
 
 username = CTRL Bot (default) (required)
 avatar_url = https://i.imgur.com/KEungv8.png (default) (optional) 
+```
+
+# Development
+
+To go grpc files
+
+install pre-requisites
+
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+```
+
+generate
+
+```bash
+protoc --go_grpc_out=. --go_out=. .\protos\filesystem.proto
+```
+
+To generate Dart grpc client files
+
+```bash
+protoc --dart_out=grpc:client/lib/generated -I. hello.proto
 ```
