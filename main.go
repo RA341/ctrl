@@ -2,14 +2,17 @@ package main
 
 import (
 	"ctrl/core/config"
+	"ctrl/core/fs"
 	qbit "ctrl/core/qbit"
-	system "ctrl/core/system"
+	"ctrl/core/system"
 	"ctrl/core/updater"
 	"ctrl/core/utils"
 	"fmt"
 	"github.com/docker/docker/client"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
@@ -39,10 +42,34 @@ func main() {
 	//SystemStatus()
 	//docker.ListDocker(cli)
 
-	// frontend
-	fs := http.FileServer(http.Dir("./frontend/build"))
-	http.Handle("/", fs)
+	/////////////////////////////////////////////////////////////////////////////
+	// GRPC setup
+	go func() {
+		grpcPort := "9221"
+		portS := fmt.Sprintf(":%s", grpcPort)
 
+		listen, err := net.Listen("tcp", portS)
+		if err != nil {
+			log.Error().Err(err).Msgf("failed to start server on %s", grpcPort)
+			return
+		}
+
+		srv := grpc.NewServer()
+		fsSrv := &fs.FileSrv{}
+
+		fs.RegisterFilesystemServer(srv, fsSrv)
+
+		log.Info().Msgf("Grpc server started on %s", grpcPort)
+		err = srv.Serve(listen)
+		if err != nil {
+			log.Error().Err(err).Msgf("failed to start server on %s", grpcPort)
+			return
+		}
+	}()
+	/////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////
+	// http server setup
 	// system power controls
 	http.HandleFunc("/shutdown", system.ExecShutDown)
 	http.HandleFunc("/reboot", system.ExecReboot)
@@ -58,13 +85,14 @@ func main() {
 	settings := config.Get()
 	port := strconv.Itoa(settings.Network.Port)
 	result := fmt.Sprintf("%s:%s", settings.Network.Host, port)
-	log.Info().Msg("Starting server on " + port)
 
+	log.Info().Msg("Starting http server on " + port)
 	err := http.ListenAndServe(result, nil)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	/////////////////////////////////////////////////////////////////////////////
 }
 
 func runPeriodicTasks(cli *client.Client) {

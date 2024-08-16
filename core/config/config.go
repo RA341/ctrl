@@ -72,6 +72,7 @@ func Load() {
 		log.Fatal().Err(err).Msgf("Failed to parse config file")
 	}
 
+	log.Debug().Msg("Successfully parsed config file")
 }
 
 func parseINI(cfg *ini.File) error {
