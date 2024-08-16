@@ -1,0 +1,31 @@
+package fs;
+
+option go_package = "./core/fs";
+
+service Filesystem {
+  rpc ListContainers (Empty) returns (ContainerList) {}
+  rpc RestartContainer (ContainerHash) returns (ContainerResponse) {}
+  rpc StopAndStartContainer (ContainerHash) returns (ContainerResponse) {}
+  rpc StopContainer (ContainerHash) returns (ContainerResponse) {}
+
+}
+
+
+message ContainerHash {
+  required string hash = 1;
+}
+
+message ContainerResponse {
+  optional string hash = 1;
+}
+
+message ContainerList {
+  repeated Container container = 1;
+}
+
+message Container {
+  repeated string containerName = 1;
+  repeated string hash = 2;
+}
+
+message Empty {}
