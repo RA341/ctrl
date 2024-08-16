@@ -1,10 +1,6 @@
 package system
 
-import (
-	"net/http"
-)
-
-func ExecShutDown(_ http.ResponseWriter, _ *http.Request) {
+func ExecShutDown() {
 	// Use the "shutdown" command to shut down the computer immediately
 	os := GetOS()
 	var cmds []string
@@ -16,7 +12,7 @@ func ExecShutDown(_ http.ResponseWriter, _ *http.Request) {
 	ExecShell(cmds)
 }
 
-func ExecReboot(_ http.ResponseWriter, _ *http.Request) {
+func ExecReboot() {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {
@@ -27,7 +23,7 @@ func ExecReboot(_ http.ResponseWriter, _ *http.Request) {
 	ExecShell(cmds)
 }
 
-func ExecSleep(_ http.ResponseWriter, _ *http.Request) {
+func ExecSleep() {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {

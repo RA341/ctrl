@@ -3,12 +3,10 @@ package main
 import (
 	"ctrl/core/config"
 	"ctrl/core/fs"
-	qbit "ctrl/core/qbit"
 	"ctrl/core/system"
 	"ctrl/core/updater"
 	"ctrl/core/utils"
 	"fmt"
-	"github.com/docker/docker/client"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -17,7 +15,6 @@ import (
 	"os"
 	"runtime"
 	"strconv"
-	"time"
 )
 
 func main() {
@@ -55,9 +52,12 @@ func main() {
 		}
 
 		srv := grpc.NewServer()
-		fsSrv := &fs.FileSrv{}
 
+		fsSrv := &fs.FileSrv{}
 		fs.RegisterFilesystemServer(srv, fsSrv)
+
+		sysSrv := &system.SysSrv{}
+		system.RegisterSystemServer(srv, sysSrv)
 
 		log.Info().Msgf("Grpc server started on %s", grpcPort)
 		err = srv.Serve(listen)
@@ -70,10 +70,6 @@ func main() {
 
 	/////////////////////////////////////////////////////////////////////////////
 	// http server setup
-	// system power controls
-	http.HandleFunc("/shutdown", system.ExecShutDown)
-	http.HandleFunc("/reboot", system.ExecReboot)
-	http.HandleFunc("/sleep", system.ExecSleep)
 	// misc stuff
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/test", test)
@@ -95,16 +91,6 @@ func main() {
 	/////////////////////////////////////////////////////////////////////////////
 }
 
-func runPeriodicTasks(cli *client.Client) {
-	ticker := time.NewTicker(time.Hour * 1)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		log.Info().Msg("Running stalled torrent search")
-		go qbit.RunQbitChecks([]qbit.Check{qbit.ClientCheck, qbit.StalledCheck}, cli)
-	}
-}
-
 func test(w http.ResponseWriter, _ *http.Request) {
 	_, err := w.Write([]byte("Hello World"))
 	if err != nil {
@@ -121,6 +107,5 @@ func verifyRootStatus() bool {
 }
 
 func SystemStatus() {
-	qbit.Status()
 	utils.WebhookStatus()
 }
