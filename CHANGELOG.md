@@ -1,3 +1,20 @@
+# [1.4.0](https://github.com/RA341/ctrl-srv/compare/v1.3.0...v1.4.0) (2024-08-16)
+
+
+### Bug Fixes
+
+* added logging to webhook ([a1e682d](https://github.com/RA341/ctrl-srv/commit/a1e682dcacde7d6617419103108a5c1c8eef4b9f))
+* changed file perm to 1000 and changed some log statements ([8d3e38d](https://github.com/RA341/ctrl-srv/commit/8d3e38da9d3309e2402d14d9a0a62beafe4ec836))
+* **config:** added file permissions for user config ([9e9bd97](https://github.com/RA341/ctrl-srv/commit/9e9bd9736871b8603acbed2d2bbab1341d90e140))
+* remove new line character from file path ([4d2246b](https://github.com/RA341/ctrl-srv/commit/4d2246bf823af2d1912b8952b9197d18aff8925c))
+* removed client ([244872e](https://github.com/RA341/ctrl-srv/commit/244872ebc6fd16a937109713af257edb85c228e1))
+* removed hardcoded webhook url ([5a779fc](https://github.com/RA341/ctrl-srv/commit/5a779fc0730bb4db2a297325d3fb22eb7b93a694))
+
+
+### Features
+
+* grpc server ([d618dc0](https://github.com/RA341/ctrl-srv/commit/d618dc0bebffe0a72575504911370138197c6079))
+
 # [1.3.0](https://github.com/RA341/ctrl-srv/compare/v1.2.1...v1.3.0) (2024-07-16)
 
 
