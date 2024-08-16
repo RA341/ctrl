@@ -3,10 +3,11 @@ module ctrl
 go 1.22
 
 require (
-	github.com/docker/docker v27.0.2+incompatible
+	github.com/docker/docker v27.1.1+incompatible
 	github.com/google/go-github/v63 v63.0.0
 	github.com/rs/zerolog v1.33.0
 	google.golang.org/grpc v1.65.0
+	google.golang.org/protobuf v1.34.2
 	gopkg.in/ini.v1 v1.67.0
 )
 
@@ -20,7 +21,6 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -41,6 +41,5 @@ require (
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240808171019-573a1156607a // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
 	gotest.tools/v3 v3.5.1 // indirect
 )
