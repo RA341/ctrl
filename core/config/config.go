@@ -72,6 +72,7 @@ func Load() {
 		log.Fatal().Err(err).Msgf("Failed to parse config file")
 	}
 
+	log.Debug().Msg("Successfully parsed config file")
 }
 
 func parseINI(cfg *ini.File) error {
@@ -94,6 +95,7 @@ func parseINI(cfg *ini.File) error {
 	qbitSection := cfg.Section("Qbit")
 
 	config.Qbit = QbitConfig{
+		Enable:        qbitSection.Key("enable").MustBool(true),
 		Url:           createFullUrl(qbitSection.Key("host").MustString("NOHOST"), qbitSection.Key("port").MustInt(8085)),
 		User:          qbitSection.Key("username").String(),
 		Pass:          qbitSection.Key("password").String(),
@@ -170,7 +172,12 @@ func CreateDefaultConfigIfNotExists(configPath string) {
 		log.Fatal().Err(err).Msg("failed to save default config file")
 	}
 
-	log.Info().Msgf("Created default config file at: %s\nIf you see any errors below, fill the required fields first", configPath)
+	setPermissions(configPath)
+
+	log.Info().Msgf("Created default config file at: %s", configPath)
+	log.Info().
+		Str("Then restart the program by running", "sudo systemctl stop ctrl.service").
+		Msg("This is a first time run, check the config first")
 }
 
 func createSection(cfg *ini.File, section string) *ini.Section {
@@ -187,4 +194,27 @@ func createKey(cfg *ini.File, section *ini.Section, key string, value string, co
 		log.Fatal().Err(err).Msgf("error creating key %s", key)
 	}
 	createdKey.Comment = comment
+}
+
+func setPermissions(filepath string) {
+	uid, gid := 1000, 1000
+
+	// Create file with current user's permissions
+	file, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create file")
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close file")
+		}
+	}(file)
+
+	// Change ownership of the file to the current user
+	if err := file.Chown(uid, gid); err != nil {
+		log.Error().Err(err).Msg("failed to change ownership of file")
+	}
+
+	log.Info().Msgf("Set permissions for %s", filepath)
 }

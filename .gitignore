@@ -5,9 +5,9 @@
 /tests/compose
 
 # genrated by ci
-package-lock.json
-package.json
 node_modules/
 *ini
 .idea
+ctrl_windows.exe
 
+ctrl_linux_v1.2.1

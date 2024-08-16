@@ -1,0 +1,33 @@
+package fs;
+
+option go_package = "./core/fs";
+
+service Filesystem {
+  rpc ListFiles (Path) returns (Folder) {}
+  rpc LinkFolder (InputFolders) returns (LinkResult) {}
+  rpc CreateFolder (Path) returns (LinkResult) {}
+}
+
+
+message InputFolders {
+  required string srcPath = 1;
+  required string destPath = 2;
+}
+
+message LinkResult {
+  optional string error = 1;
+}
+
+message Path {
+  required string path = 1;
+}
+
+message Folder {
+  required string fullPath = 1;
+  repeated File files = 2;
+  repeated Folder folders = 3;
+}
+
+message File {
+  required string name = 1;
+}

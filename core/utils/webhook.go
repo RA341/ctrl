@@ -1,44 +1,56 @@
 package utils
 
 import (
+	"ctrl/core/config"
+	"ctrl/core/updater"
+	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
-	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
-const webhookUrl = "https://discord.com/api/webhooks/1223892724537753661/5VvQzM9chKTUYkAxit3ddAf__8s_dybIbBQ2sB33n7S7RHgn4OzQ27XgXZ0f2qbP0S7w"
-
 func SendWebHook(message []byte) bool {
+	webhookUrl := config.Get().DiscordNotif.WebhookURL
+
 	payload := strings.NewReader(string(message))
 
 	req, err := http.NewRequest("POST", webhookUrl, payload)
 	req.Header.Add("Content-Type", "application/json")
 	if err != nil {
-		log.Println("Failed to create request.Reason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to create request")
 		return false
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Println("Failed to send request\nReason: " + err.Error())
+		log.Error().Err(err).Msg("Failed to send request")
 		return false
 	}
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			log.Println("Failed to close buffer body")
+			log.Error().Err(err).Msg("Failed to close body")
 			return
 		}
 	}(res.Body)
 
 	if res.StatusCode < 300 {
-		log.Print("Sent to webhook")
+		log.Debug().Msgf("Webhook sent: %s", res.Status)
 		return true
 	} else {
-		log.Println("Request failed: " + res.Status)
+		log.Error().Msgf("Request failed: %s", res.Status)
 		return false
+	}
+}
+
+func WebhookStatus() {
+	message := fmt.Sprintf("CTRL Version: %s, system started on %s", updater.Version, time.Now().Format("2006-01-02 15:04:05"))
+	res := SendWebHook([]byte(message))
+	if !res {
+		log.Warn().Msg("Failed to send webhook, verify webhook settings")
 	}
 }
