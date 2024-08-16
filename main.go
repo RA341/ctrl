@@ -73,7 +73,6 @@ func main() {
 	// misc stuff
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/test", test)
-	//http.HandleFunc("/device", deviceCheck)
 
 	// start periodic func
 	//go runPeriodicTasks(cli)
