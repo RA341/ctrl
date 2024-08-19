@@ -7,7 +7,7 @@ A helpful utility server, to control and monitor my home server.
 * Run the following in a directory of your choosing
 
 ```bash
-curl -s https://api.github.com/repos/ra341/ctrl/releases/latest | grep "browser_download_url.*ctrl_linux" | cut -d '"' -f 4 | wget -qi - -O ./ctrl_linux | chmod +x ./ctrl_linux
+curl -s https://api.github.com/repos/ra341/ctrl/releases/latest | grep "browser_download_url.*ctrl_linux" | cut -d '"' -f 4 | wget -qi - -O ./ctrl_linux && chmod +x ./ctrl_linux
 ```
 
 * then run the program
