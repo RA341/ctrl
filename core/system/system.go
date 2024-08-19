@@ -1,6 +1,6 @@
 package system
 
-func ExecShutDown() {
+func ExecShutDown() error {
 	// Use the "shutdown" command to shut down the computer immediately
 	os := GetOS()
 	var cmds []string
@@ -9,10 +9,15 @@ func ExecShutDown() {
 	} else {
 		cmds = []string{"sudo", "shutdown", "now"}
 	}
-	ExecShell(cmds)
+
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func ExecReboot() {
+func ExecReboot() error {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {
@@ -20,10 +25,15 @@ func ExecReboot() {
 	} else {
 		cmds = []string{"sudo", "reboot", "now"}
 	}
-	ExecShell(cmds)
+
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func ExecSleep() {
+func ExecSleep() error {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {
@@ -31,6 +41,11 @@ func ExecSleep() {
 	} else {
 		cmds = []string{"sudo", "sleep", "now"}
 	}
-	ExecShell(cmds)
 
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

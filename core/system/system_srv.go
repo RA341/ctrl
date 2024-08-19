@@ -11,7 +11,10 @@ type SysSrv struct {
 
 func (s *SysSrv) Shutdown(context context.Context, empty *Empty) (*Empty, error) {
 	log.Info().Msg("Setting Shutdown")
-	ExecShutDown()
+	err := ExecShutDown()
+	if err != nil {
+		return nil, err
+	}
 
 	result := &Empty{}
 	return result, nil
@@ -19,7 +22,10 @@ func (s *SysSrv) Shutdown(context context.Context, empty *Empty) (*Empty, error)
 
 func (s *SysSrv) Restart(context context.Context, empty *Empty) (*Empty, error) {
 	log.Info().Msg("Setting Restart")
-	ExecReboot()
+	err := ExecReboot()
+	if err != nil {
+		return nil, err
+	}
 
 	result := &Empty{}
 	return result, nil
@@ -27,7 +33,10 @@ func (s *SysSrv) Restart(context context.Context, empty *Empty) (*Empty, error) 
 
 func (s *SysSrv) Sleep(context context.Context, empty *Empty) (*Empty, error) {
 	log.Info().Msg("Setting Sleep")
-	ExecSleep()
+	err := ExecSleep()
+	if err != nil {
+		return nil, err
+	}
 
 	result := &Empty{}
 	return result, nil

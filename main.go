@@ -29,8 +29,8 @@ func main() {
 	}
 
 	config.Load()
+	system.RegisterService()
 	//qbit.InitBasePath()
-	//system.RegisterService()
 
 	//cli := docker.InitDocker()
 	//defer docker.DisposeDocker(cli)
