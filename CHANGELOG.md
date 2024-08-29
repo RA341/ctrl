@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/RA341/ctrl/compare/v1.4.0...v1.5.0) (2024-08-29)
+
+
+### Bug Fixes
+
+* added error handling to file system controls ([524d5a7](https://github.com/RA341/ctrl/commit/524d5a7a4a6544019a894cf6be40fb28fb6e2602))
+* permission issue for nested folder creations ([3f4e346](https://github.com/RA341/ctrl/commit/3f4e346ee6d41ba40d9e1f08c89361d1ce75fb1f))
+
+
+### Features
+
+* system controls to grpc ([aa8afa7](https://github.com/RA341/ctrl/commit/aa8afa7a8cc258f8b2b912e77089eb18aab98bcb))
+
 # [1.4.0](https://github.com/RA341/ctrl-srv/compare/v1.3.0...v1.4.0) (2024-08-16)
 
 
