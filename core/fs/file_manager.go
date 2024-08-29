@@ -2,9 +2,11 @@ package fs
 
 import (
 	"errors"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const uid = 1000
@@ -16,15 +18,32 @@ func ChangeUserPermission(path string) {
 		log.Error().Err(err).Msgf("Failed to change user permission for path %s", path)
 		return
 	}
+	log.Info().Msgf("Changed user permission for path %s", path)
 }
 
-func CreateFolder(path string) error {
+func ChangeUserPermissionRecursively(parentPath string, newPath string) {
+	relativePath, err := filepath.Rel(parentPath, newPath)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	segments := strings.Split(relativePath, string(filepath.Separator))
+
+	currentPath := parentPath
+	for _, segment := range segments {
+		currentPath = filepath.Join(currentPath, segment)
+		ChangeUserPermission(currentPath)
+	}
+}
+
+func CreateFolder(path string, anchorPath string) error {
 	err := os.MkdirAll(path, 0750)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to create folder for path %s", path)
 		return err
 	}
-	ChangeUserPermission(path)
+	ChangeUserPermissionRecursively(anchorPath, path)
 	return nil
 }
 

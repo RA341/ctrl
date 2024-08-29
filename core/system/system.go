@@ -1,10 +1,6 @@
 package system
 
-import (
-	"net/http"
-)
-
-func ExecShutDown(_ http.ResponseWriter, _ *http.Request) {
+func ExecShutDown() error {
 	// Use the "shutdown" command to shut down the computer immediately
 	os := GetOS()
 	var cmds []string
@@ -13,10 +9,15 @@ func ExecShutDown(_ http.ResponseWriter, _ *http.Request) {
 	} else {
 		cmds = []string{"sudo", "shutdown", "now"}
 	}
-	ExecShell(cmds)
+
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func ExecReboot(_ http.ResponseWriter, _ *http.Request) {
+func ExecReboot() error {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {
@@ -24,10 +25,15 @@ func ExecReboot(_ http.ResponseWriter, _ *http.Request) {
 	} else {
 		cmds = []string{"sudo", "reboot", "now"}
 	}
-	ExecShell(cmds)
+
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func ExecSleep(_ http.ResponseWriter, _ *http.Request) {
+func ExecSleep() error {
 	os := GetOS()
 	var cmds []string
 	if os == "windows" {
@@ -35,6 +41,11 @@ func ExecSleep(_ http.ResponseWriter, _ *http.Request) {
 	} else {
 		cmds = []string{"sudo", "sleep", "now"}
 	}
-	ExecShell(cmds)
 
+	err := ExecShell(cmds)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

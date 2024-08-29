@@ -1,0 +1,11 @@
+package fs;
+
+option go_package = "./core/system";
+
+service System {
+  rpc Shutdown (Empty) returns (Empty) {}
+  rpc Restart (Empty) returns (Empty) {}
+  rpc Sleep (Empty)returns (Empty) {}
+}
+
+message Empty {}
