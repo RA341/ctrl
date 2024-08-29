@@ -5,7 +5,7 @@ option go_package = "./core/fs";
 service Filesystem {
   rpc ListFiles (Path) returns (Folder) {}
   rpc LinkFolder (InputFolders) returns (LinkResult) {}
-  rpc CreateFolder (Path) returns (LinkResult) {}
+  rpc CreateFolder (NewPath) returns (LinkResult) {}
 }
 
 
@@ -20,6 +20,11 @@ message LinkResult {
 
 message Path {
   required string path = 1;
+}
+
+message NewPath {
+  required string path = 1;
+  required string anchorPath = 2;
 }
 
 message Folder {

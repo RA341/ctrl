@@ -30,7 +30,7 @@ const (
 type FilesystemClient interface {
 	ListFiles(ctx context.Context, in *Path, opts ...grpc.CallOption) (*Folder, error)
 	LinkFolder(ctx context.Context, in *InputFolders, opts ...grpc.CallOption) (*LinkResult, error)
-	CreateFolder(ctx context.Context, in *Path, opts ...grpc.CallOption) (*LinkResult, error)
+	CreateFolder(ctx context.Context, in *NewPath, opts ...grpc.CallOption) (*LinkResult, error)
 }
 
 type filesystemClient struct {
@@ -61,7 +61,7 @@ func (c *filesystemClient) LinkFolder(ctx context.Context, in *InputFolders, opt
 	return out, nil
 }
 
-func (c *filesystemClient) CreateFolder(ctx context.Context, in *Path, opts ...grpc.CallOption) (*LinkResult, error) {
+func (c *filesystemClient) CreateFolder(ctx context.Context, in *NewPath, opts ...grpc.CallOption) (*LinkResult, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LinkResult)
 	err := c.cc.Invoke(ctx, Filesystem_CreateFolder_FullMethodName, in, out, cOpts...)
@@ -77,7 +77,7 @@ func (c *filesystemClient) CreateFolder(ctx context.Context, in *Path, opts ...g
 type FilesystemServer interface {
 	ListFiles(context.Context, *Path) (*Folder, error)
 	LinkFolder(context.Context, *InputFolders) (*LinkResult, error)
-	CreateFolder(context.Context, *Path) (*LinkResult, error)
+	CreateFolder(context.Context, *NewPath) (*LinkResult, error)
 	mustEmbedUnimplementedFilesystemServer()
 }
 
@@ -94,7 +94,7 @@ func (UnimplementedFilesystemServer) ListFiles(context.Context, *Path) (*Folder,
 func (UnimplementedFilesystemServer) LinkFolder(context.Context, *InputFolders) (*LinkResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LinkFolder not implemented")
 }
-func (UnimplementedFilesystemServer) CreateFolder(context.Context, *Path) (*LinkResult, error) {
+func (UnimplementedFilesystemServer) CreateFolder(context.Context, *NewPath) (*LinkResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateFolder not implemented")
 }
 func (UnimplementedFilesystemServer) mustEmbedUnimplementedFilesystemServer() {}
@@ -155,7 +155,7 @@ func _Filesystem_LinkFolder_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Filesystem_CreateFolder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Path)
+	in := new(NewPath)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func _Filesystem_CreateFolder_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: Filesystem_CreateFolder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FilesystemServer).CreateFolder(ctx, req.(*Path))
+		return srv.(FilesystemServer).CreateFolder(ctx, req.(*NewPath))
 	}
 	return interceptor(ctx, in, info, handler)
 }
